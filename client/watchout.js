@@ -1,7 +1,7 @@
 // start slingin' some d3 here.
 
-var width = 785;
-var height = 590;
+var width = 1265;
+var height = 700;
 
 //radius of circle for player
 var playerRadius = 20;
@@ -12,7 +12,6 @@ d3.select('.header')
   .append('text')
   .text('ARUN & JEREMY\'S EPIC PINBALL GAME!');
 
-
 //Container
 var container = d3.select('.container')
   .append('svg')
@@ -20,50 +19,41 @@ var container = d3.select('.container')
   .duration(750)
   .style({'width': '100vw', 'height': '100vh'});
 
-//Battlefield
-// //position
-// var posX = d3.select('svg')
-//   .style({'margin': '50vw'});
-
 var battlefield = d3.select('svg')
   .append('rect')
   .transition()
   .duration(800)
-  .attr('width', 800)
-  .attr('height', 600)
-  .style({'margin': '25vw'}) //not working
+  .attr('width', 1280)
+  .attr('height', 720)
+  // .style({'margin': '25vw'}) //not working
   .style('position', 'absolute')
   .style('fill', '#6CF9FF')
   .style('stroke', 'black')
   .attr('align', 'center');
 
-//drag
-var drag = d3.behavior.drag()
-  .origin(function(d) {
-    return d;
-  })
-  .on('drag', dragmove);
+var playerData = [{
+  x: 640,
+  y: 360
+}];
 
 //drag function
 var dragmove = function(d) {
   var x = d3.event.x;
   var y = d3.event.y;
+  console.log('x:', x, 'y: ', y);
   d3.select(this)
-    .attr('cx', d.x = Math.max(playerRadius, Math.min(width - playerRadius, d3.event.x)))
-    .attr('cy', d.y = Math.max(playerRadius, Math.min(width - playerRadius, d3.event.y))); 
+    .attr('x', d.x = x)
+    .attr('y', d.y = y);
 };
 
-//Player
-var player = d3.select('svg')
-  .append('rect')
-  .attr('class', 'player')
-  .attr('width', 20)
-  .attr('height', 20)
-  // .attr('r', playerRadius) 
-  .style('stroke', '#FF0D38')
-  .style('fill', '#000')
-  .call(drag);
-    
+//drag
+var drag = d3.behavior.drag()
+  // .origin(function(d) {
+  //   return d;
+  // })
+  .on('drag', dragmove);
+
+
 //create more enemies
 var createEnemies = function(n) {
   return _.range(0, n).map(function(i) {
@@ -76,7 +66,7 @@ var createEnemies = function(n) {
 };
 
 var dataset = createEnemies(25);
-console.log(dataset);
+// console.log(dataset);
 
 //append Enemies
 d3.select('svg').selectAll('circle')
@@ -93,6 +83,30 @@ d3.select('svg').selectAll('circle')
   .attr('cy', function(d) {
     return d.y;
   });
+
+//test
+// d3.select('svg')
+//   .append('rect')
+//   .attr('width', 20)
+//   .attr('height', 20);
+
+//Player
+d3.select('svg')
+  .data(playerData)
+  // .enter()
+  .append('rect')
+  .classed('player', true)
+  .attr('width', 20)
+  .attr('height', 20)
+  .attr('x', function(d) {
+    return d.x;
+  })
+  .attr('y', function(d) {
+    return d.y;
+  })
+  .style('stroke', '#FF0D38')
+  .style('fill', '#000')
+  .call(drag);
 
 //axes
 var axes = {

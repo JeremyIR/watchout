@@ -16,7 +16,7 @@ Feel free to use it if you like. */
 }
 
 .container {
-  background: linear-gradient(225deg, #2488ea, #ececec);
+  background: linear-gradient(225deg, #f9fafb, #ececec);
   background-size: 400% 400%;
 
   -webkit-animation: D3-Container 25s ease infinite;
