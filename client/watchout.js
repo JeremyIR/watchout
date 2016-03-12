@@ -17,7 +17,7 @@ var container = d3.select('.container')
   .transition()
   .duration(750)
   .style('background-color', '#eee')
-  .style({width: "100vw", height: "100vh"});
+  .style({'width': '100vw', 'height': '100vh'});
 
 //Battlefield
 var battlefield = d3.select('.battlefield')
@@ -25,15 +25,24 @@ var battlefield = d3.select('.battlefield')
   .attr('width', canvas.width)
   .attr('height', canvas.height)
   .attr('padding', canvas.padding)
-  .style({"background-color": 'red', border: '2px'});
+  .style({'background-color': 'red', border: '2px'});
 
 //Enemies
-var enemies = d3.select('.enemies')
+var enemies = d3.select('.battlefield')
   .append('svg')
-  .attr('width', 50)
-  .attr('height', 50);
-
+  .attr('width', 500)
+  .attr('height', 500);
+    
   //append Enemies
 enemies.append('circle')
   .style('stroke', 'gray')
-  .style('fill', 'blue');
+  .style('fill', 'aliceblue')
+  .attr('r', 10)
+  .attr('cx', 20)
+  .attr('cy', 20);
+
+//axes
+var axes = {
+  x: d3.scale.linear().domain([0, 100]).range([0, canvas.width]),
+  y: d3.scale.linear().domain([0, 100]).range([0, canvas.height])
+};
