@@ -3,6 +3,9 @@
 var width = 785;
 var height = 590;
 
+//radius of circle for player
+var playerRadius = 20;
+
 //Title
 d3.select('.header')
   .append('p')
@@ -15,33 +18,51 @@ var container = d3.select('.container')
   .append('svg')
   .transition()
   .duration(750)
-  .style('background-color', '#eee')
   .style({'width': '100vw', 'height': '100vh'});
 
 //Battlefield
+// //position
+// var posX = d3.select('svg')
+//   .style({'margin': '50vw'});
+
 var battlefield = d3.select('svg')
   .append('rect')
   .transition()
-  .duration(1000)
-  .attr('x', 0)
-  .attr('y', 0)
+  .duration(800)
   .attr('width', 800)
   .attr('height', 600)
+  .style({'margin': '25vw'}) //not working
+  .style('position', 'absolute')
   .style('fill', '#6CF9FF')
   .style('stroke', 'black')
   .attr('align', 'center');
 
+//drag
+var drag = d3.behavior.drag()
+  .origin(function(d) {
+    return d;
+  })
+  .on('drag', dragmove);
+
+//drag function
+var dragmove = function(d) {
+  var x = d3.event.x;
+  var y = d3.event.y;
+  d3.select(this)
+    .attr('cx', d.x = Math.max(playerRadius, Math.min(width - playerRadius, d3.event.x)))
+    .attr('cy', d.y = Math.max(playerRadius, Math.min(width - playerRadius, d3.event.y))); 
+};
+
 //Player
 var player = d3.select('svg')
   .append('rect')
-  // .path('m-7.5,1.62413c0,-5.04095 4.08318,-9.12413 9.12414,-9.12413c5.04096,0 9.70345,5.53145 11.87586,9.12413c-2.02759,2.72372 -6.8349,9.12415 -11.87586,9.12415c-5.04096,0 -9.12414,-4.08318 -9.12414,-9.12415z')
-  // .attr('r', 8)
-  .attr('x', 370)
-  .attr('y', 270)
-  .attr('width', 30)
-  .attr('height', 30)
+  .attr('class', 'player')
+  .attr('width', 20)
+  .attr('height', 20)
+  // .attr('r', playerRadius) 
   .style('stroke', '#FF0D38')
-  .style('fill', '#000');
+  .style('fill', '#000')
+  .call(drag);
     
 //create more enemies
 var createEnemies = function(n) {
@@ -54,7 +75,7 @@ var createEnemies = function(n) {
   });
 };
 
-var dataset = createEnemies(50);
+var dataset = createEnemies(25);
 console.log(dataset);
 
 //append Enemies
@@ -64,7 +85,8 @@ d3.select('svg').selectAll('circle')
   .append('circle')
   .style('stroke', 'gray')
   .style('fill', 'red')
-  .attr('r', 10)
+  .attr('class', 'enemies')
+  .attr('r', 15)
   .attr('cx', function(d) {
     return d.x;
   })

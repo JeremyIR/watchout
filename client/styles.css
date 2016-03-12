@@ -15,3 +15,33 @@ Feel free to use it if you like. */
   
 }
 
+.container {
+  background: linear-gradient(225deg, #2488ea, #ececec);
+  background-size: 400% 400%;
+
+  -webkit-animation: D3-Container 25s ease infinite;
+  -moz-animation: D3-Container 25s ease infinite;
+  -o-animation: D3-Container 25s ease infinite;
+  animation: D3-Container 25s ease infinite;
+
+  @-webkit-keyframes D3-Container {
+      0%{background-position:0% 87%}
+      50%{background-position:100% 14%}
+      100%{background-position:0% 87%}
+  }
+  @-moz-keyframes D3-Container {
+      0%{background-position:0% 87%}
+      50%{background-position:100% 14%}
+      100%{background-position:0% 87%}
+  }
+  @-o-keyframes D3-Container {
+      0%{background-position:0% 87%}
+      50%{background-position:100% 14%}
+      100%{background-position:0% 87%}
+  }
+  @keyframes D3-Container { 
+      0%{background-position:0% 87%}
+      50%{background-position:100% 14%}
+      100%{background-position:0% 87%}
+  }
+}
