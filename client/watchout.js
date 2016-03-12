@@ -1,10 +1,5 @@
 // start slingin' some d3 here.
 
-var canvas = {
-  width: 900,
-  height: 450,
-  padding: 20
-};
 
 //Title
 d3.select('.header')
@@ -14,35 +9,43 @@ d3.select('.header')
 
 //Container
 var container = d3.select('.container')
+  .append('svg')
   .transition()
   .duration(750)
   .style('background-color', '#eee')
   .style({'width': '100vw', 'height': '100vh'});
-
-//Battlefield
-var battlefield = d3.select('.battlefield')
-  .append('svg')
-  .attr('width', canvas.width)
-  .attr('height', canvas.height)
-  .attr('padding', canvas.padding)
-  .style({'background-color': 'red', border: '2px'});
-
-//Enemies
-var enemies = d3.select('.battlefield')
-  .append('svg')
-  .attr('width', 500)
-  .attr('height', 500);
     
-  //append Enemies
-enemies.append('circle')
+//create more enemies
+var createEnemies = function(n) {
+  return _.range(0, n).map(function(i) {
+    return {
+      id: i,
+      x: parseFloat(Math.random() * 100).toFixed(3),
+      y: parseFloat(Math.random() * 100).toFixed(3)
+    };
+  });
+};
+
+var dataset = createEnemies(50);
+console.log(dataset);
+
+//append Enemies
+d3.select('svg').selectAll('circle')
+  .data(dataset)
+  .enter()
+  .append('circle')
   .style('stroke', 'gray')
-  .style('fill', 'aliceblue')
+  .style('fill', 'red')
   .attr('r', 10)
-  .attr('cx', 20)
-  .attr('cy', 20);
+  .attr('cx', function(d) {
+    return d.x;
+  })
+  .attr('cy', function(d) {
+    return d.y;
+  });
 
 //axes
 var axes = {
-  x: d3.scale.linear().domain([0, 100]).range([0, canvas.width]),
-  y: d3.scale.linear().domain([0, 100]).range([0, canvas.height])
+  x: d3.scale.linear().domain([0, 100]).range([0, 500]),
+  y: d3.scale.linear().domain([0, 100]).range([0, 500])
 };

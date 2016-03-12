@@ -8,4 +8,9 @@ Feel free to use it if you like. */
 .header p {
   font-family: ‘Merriweather’, Georgia, serif;
   text-align: center;
+  padding: 10px;
+  width: 100vw;
+  height: 60px;
+  vertical-align: middle;
+  
 }
