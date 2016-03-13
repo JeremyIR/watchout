@@ -3,6 +3,9 @@
 var width = 1265;
 var height = 700;
 
+//color set
+var setColor = d3.scale.category20b();
+
 //radius of circle for player
 var playerRadius = 20;
 
@@ -21,12 +24,13 @@ var container = d3.select('.container')
 
 var battlefield = d3.select('svg')
   .append('rect')
+  .classed('battlefield', true)
   .transition()
-  .duration(800)
+  .duration(1100)
   .attr('width', 1280)
   .attr('height', 720)
   // .style({'margin': '25vw'}) //not working
-  .style('position', 'absolute')
+  .style('position', 'relative')
   .style('fill', '#6CF9FF')
   .style('stroke', 'black')
   .attr('align', 'center');
@@ -42,8 +46,8 @@ var dragmove = function(d) {
   var y = d3.event.y;
   console.log('x:', x, 'y: ', y);
   d3.select(this)
-    .attr('x', d.x = x)
-    .attr('y', d.y = y);
+    .attr('cx', d.x = x)
+    .attr('cy', d.y = y);
 };
 
 //drag
@@ -65,18 +69,20 @@ var createEnemies = function(n) {
   });
 };
 
-var dataset = createEnemies(25);
+var dataset = createEnemies(50);
 // console.log(dataset);
 
 //append Enemies
-d3.select('svg').selectAll('circle')
+var enemies = d3.select('svg').selectAll('circle')
   .data(dataset)
   .enter()
   .append('circle')
   .style('stroke', 'gray')
-  .style('fill', 'red')
+  .style('fill', function(d, i) {
+    return setColor(i % 20);
+  })
   .attr('class', 'enemies')
-  .attr('r', 15)
+  .attr('r', 10)
   .attr('cx', function(d) {
     return d.x;
   })
@@ -91,21 +97,22 @@ d3.select('svg').selectAll('circle')
 //   .attr('height', 20);
 
 //Player
-d3.select('svg')
+var player = d3.select('svg')
   .data(playerData)
   // .enter()
-  .append('rect')
+  .append('circle')
   .classed('player', true)
-  .attr('width', 20)
-  .attr('height', 20)
-  .attr('x', function(d) {
+  .attr('r', 20)
+  // .attr('width', 30)
+  // .attr('height', 30)
+  .attr('cx', function(d) {
     return d.x;
   })
-  .attr('y', function(d) {
+  .attr('cy', function(d) {
     return d.y;
   })
-  .style('stroke', '#FF0D38')
-  .style('fill', '#000')
+  .style('stroke', '#5B595C')
+  .style('fill', '#FFE60D')
   .call(drag);
 
 //axes
@@ -128,7 +135,9 @@ var update = function(data) {
       })
       .attr('cy', function(d) {
         return axes.y(d.y);
-      });
+      })
+      .tween('collision', collide)
+      .each('end', update);
 };
 
 //update(dataset);
@@ -136,3 +145,41 @@ var update = function(data) {
 setInterval(function() {
   update(d3.shuffle(dataset));
 }, 1000);
+
+//Collision Function
+var collide = function() {
+  return function() {
+    var thisEnemy = d3.select(this);
+
+    d3.select('.enemies').each(function() {
+      var otherEnemy = d3.select(this);
+
+      if (thisEnemy.datum() !== otherEnemy.datum()) {
+
+        dx = thisEnemy.attr('cx') - otherEnemy.attr('cx'),
+          dy = thisEnemy.attr('cy') - otherEnemy.attr('cy'),
+          distance = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+
+        if (distance < +thisEnemy.attr('r') + +otherEnemy.attr('r')) {
+          collision(thisEnemy, otherEnemy);
+        }
+      }
+    });
+  };
+};
+
+var collision = function(thisEnemy, otherEnemy) {
+  console.log('Collision at: ' + thisEnemy.attr('cx') + ', ' + thisEnemy.attr('cy'));
+};
+
+//loop through dataset (enemies)
+for (var i = 0; i < dataset.length; i++) {
+  if (collide(dataset[i])) {
+    console.log('returns true');
+    d3.select('.player').style('fill', 'white');
+  } else {
+    console.log('returns false');
+    d3.select('.player').style('fill', 'purple');
+  }
+}
+
