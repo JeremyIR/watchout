@@ -142,7 +142,7 @@ var collide = function() {
           dy = thisEnemy.attr('cy') - otherEnemy.attr('cy'),
           distance = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
 
-        if (distance < +thisEnemy.attr('r') + +otherEnemy.attr('r')) {
+        if (distance < (+thisEnemy.attr('r') + +otherEnemy.attr('r'))) {
           collision(thisEnemy, otherEnemy);
         }
       }
