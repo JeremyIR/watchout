@@ -13,7 +13,7 @@ var playerRadius = 20;
 d3.select('.header')
   .append('p')
   .append('text')
-  .text('ARUN & JEREMY\'S EPIC PINBALL GAME!');
+  .text('ARUN & JEREMY\'S JELLYBEAN GAME!');
 
 //Container
 var container = d3.select('.container')
@@ -52,9 +52,9 @@ var dragmove = function(d) {
 
 //drag
 var drag = d3.behavior.drag()
-  // .origin(function(d) {
-  //   return d;
-  // })
+  .origin(function(d) {
+    return d;
+  })
   .on('drag', dragmove);
 
 
@@ -90,12 +90,6 @@ var enemies = d3.select('svg').selectAll('circle')
     return d.y;
   });
 
-//test
-// d3.select('svg')
-//   .append('rect')
-//   .attr('width', 20)
-//   .attr('height', 20);
-
 //Player
 var player = d3.select('svg')
   .data(playerData)
@@ -103,8 +97,6 @@ var player = d3.select('svg')
   .append('circle')
   .classed('player', true)
   .attr('r', 20)
-  // .attr('width', 30)
-  // .attr('height', 30)
   .attr('cx', function(d) {
     return d.x;
   })
@@ -121,30 +113,20 @@ var axes = {
   y: d3.scale.linear().domain([0, height]).range([0, height])
 };
 
-//Update Function
-var update = function(data) {
-  // DATA JOIN
-  var circle = d3.select('svg').selectAll('circle') 
-    .data(data);
-
-  // UPDATE
-  circle.transition()
-      .duration(1100)
-      .attr('cx', function(d) {
-        return axes.x(d.x);
-      })
-      .attr('cy', function(d) {
-        return axes.y(d.y);
-      })
-      .tween('collision', collide)
-      .each('end', update);
+//Scoreboard
+var score = 0;
+var bestScore = 0;
+var scoreKeeper = function() {
+  score += 1;
+  bestScore = Math.max(score, bestScore);
+  d3.select('.scoreboard .highscore span').text(bestScore);
+  d3.select('.scoreboard .current span').text(score);
 };
 
-//update(dataset);
+setInterval(scoreKeeper, 100);
 
-setInterval(function() {
-  update(d3.shuffle(dataset));
-}, 1000);
+var prevCollision = false;
+var collisionCount = 0;
 
 //Collision Function
 var collide = function() {
@@ -169,17 +151,35 @@ var collide = function() {
 };
 
 var collision = function(thisEnemy, otherEnemy) {
+  collisionCount++;
+  d3.select('.scoreboard .collisions span').text(collisionCount);
+  score = 0;
   console.log('Collision at: ' + thisEnemy.attr('cx') + ', ' + thisEnemy.attr('cy'));
+  console.log(collisionCount);
 };
 
-//loop through dataset (enemies)
-for (var i = 0; i < dataset.length; i++) {
-  if (collide(dataset[i])) {
-    console.log('returns true');
-    d3.select('.player').style('fill', 'white');
-  } else {
-    console.log('returns false');
-    d3.select('.player').style('fill', 'purple');
-  }
-}
+//Update Function
+var update = function(data) {
+  // DATA JOIN
+  var circle = d3.select('svg').selectAll('circle') 
+    .data(data);
+
+  // UPDATE
+  circle.transition()
+      .duration(1100)
+      .attr('cx', function(d) {
+        return axes.x(d.x);
+      })
+      .attr('cy', function(d) {
+        return axes.y(d.y);
+      })
+      .tween('collision', collide)
+      .each('end', function() {
+        update(dataset);
+      });
+};
+
+setInterval(function() {
+  update(d3.shuffle(dataset));
+}, 1000);
 
